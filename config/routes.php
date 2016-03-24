@@ -1,0 +1,2 @@
+<?php
+$routes['altaf'] = 'husain';

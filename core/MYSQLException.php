@@ -1,5 +1,4 @@
 <?php
-include_once('configData.php');
 abstract class MYSQLException extends Exception{
 	public $log_path = '';
 	public $log_file = '';

@@ -1,5 +1,4 @@
 <?php
-include_once('MYSQLException.php');
 abstract class mySQLModel extends MYSQLException{
 	/* Host value like localhost */
 	protected $host;

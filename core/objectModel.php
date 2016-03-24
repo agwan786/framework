@@ -1,5 +1,4 @@
 <?php
-include_once('mySQLModel.php');
 abstract class ObjectModel extends mySQLModel{
 	private $foo = array();
 	private $errors;
@@ -9,17 +8,11 @@ abstract class ObjectModel extends mySQLModel{
 		parent::__construct();				
 	}
 
-	public function set($name,$value){
-		if($name=='*'){
-			foreach($value as $key=>$val){
-				$this->foo[$key] = $val;
-			}
-		}else{
-			$this->foo[$name] = $value;
-		}
+	public function __set($name,$value){	
+		$this->foo[$name] = $value;		
 	}
 
-	public function get($name){
+	public function __get($name){
 		return $this->foo[$name];
 	}
 
@@ -52,7 +45,7 @@ abstract class ObjectModel extends mySQLModel{
 		return $records = $this->executeS($this->sql);
 	}
 
-	public function add($dat){
+	public function add(){
 		$this->sql = 'INSERT INTO {$this->get("table")} ';
 		$columns = '';
 		$values = '';
