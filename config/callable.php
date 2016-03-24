@@ -7,7 +7,12 @@ if(strpos($url, 'index.php'))
 else
 	$urlParam = explode($domain, $url);
 
-$strRequest = explode('/', $urlParam[1]);
+if(!empty($routes) && isset($routes[$urlParam[1]]) && $routes[$urlParam[1]]!='')
+	$urlParams = $routes[$urlParam[1]];
+else
+	$urlParams = $urlParam[1];
+$strRequest = explode('/', $urlParams);
+
 $controllerName = ucwords($strRequest[0]);
 $methodName = $strRequest[1];
 try{

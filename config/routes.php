@@ -1,2 +1,2 @@
 <?php
-$routes['altaf'] = 'husain';
+$routes['altaf'] = 'index/helloworld';
