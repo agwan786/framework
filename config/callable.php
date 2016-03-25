@@ -27,6 +27,7 @@ else
 
 try{
 	$getMethodFunc = methodCheck($controllerName, $methodName);
+
 	if(false === $getMethodFunc){
 		die("This function is not exist in your system.");
 	}

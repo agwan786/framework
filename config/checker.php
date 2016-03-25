@@ -13,6 +13,7 @@ function __autoload($className){
 function methodCheck($className, $methodName){
 	if (method_exists($className, $methodName)){
 		$refl = new ReflectionMethod($className, $methodName);
+
 		if ($refl->isPrivate())
 			throw new Exception("This method is not callable. Because this is private function.");
 		else if ($refl->isProtected())

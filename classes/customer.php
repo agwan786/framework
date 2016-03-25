@@ -7,6 +7,8 @@ class Customer extends objectModel{
 			'fname'=>array('require'=>true, 'type'=>'string'),
 			'lname'=>array('require'=>true, 'type'=>'string'),
 			'email'=>array('require'=>true, 'type'=>'string'),			
+			'password'=>array('require'=>true, 'type'=>'string'),
+			'date'=>array('require'=>true, 'type'=>'string')
 			)
 		);
 	public function __construct($id_customer=''){			
@@ -14,7 +16,7 @@ class Customer extends objectModel{
 		if($id_customer){
 			$this->return = 1;
 			$this->where = array('id'=>$id_customer);
-			//echo "<pre>";print_r($this->getData());
+			echo "<pre>";print_r($this->getData());
 		}
 	}
 

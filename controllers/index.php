@@ -14,6 +14,5 @@ class Index extends Controller{
 		$obj->lname = 'Wadhwani';
 		$obj->email = 'monika.w@cisinlabs.com';
 		$obj->add();
-		//$obj->test();
 	}
 }
