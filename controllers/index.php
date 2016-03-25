@@ -4,6 +4,10 @@ class Index extends Controller{
 		parent::__constructor();
 	}
 
+	public function index(){
+		echo "Hello World!";
+	}
+
 	public function helloWorld(){
 		$obj = new Customer();
 		$obj->test();

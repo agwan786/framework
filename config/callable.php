@@ -7,14 +7,23 @@ if(strpos($url, 'index.php'))
 else
 	$urlParam = explode($domain, $url);
 
+if(empty($urlParam[1])){
+	$urlParam[1] = $config['default_controller']."/".$config['default_controller'];
+}
+
 if(!empty($routes) && isset($routes[$urlParam[1]]) && $routes[$urlParam[1]]!='')
 	$urlParams = $routes[$urlParam[1]];
 else
 	$urlParams = $urlParam[1];
+
 $strRequest = explode('/', $urlParams);
 
 $controllerName = ucwords($strRequest[0]);
-$methodName = $strRequest[1];
+if(!isset($strRequest[1]))
+	$methodName = 'index';
+else
+	$methodName = $strRequest[1];
+
 try{
 	$getMethodFunc = methodCheck($controllerName, $methodName);
 

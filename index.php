@@ -6,6 +6,7 @@ include_once 'config/constant.php';
 include_once 'config/routes.php';
 include_once 'config/define.inc.php';
 include_once 'config/checker.php';
+include_once 'config/config.php';
 include_once 'config/callable.php';
 
  

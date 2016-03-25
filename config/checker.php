@@ -6,8 +6,9 @@ function __autoload($className){
 		include_once ('./core/'.strtolower($className).'.php');
 	else if (@file_exists('./classes/'.strtolower($className).'.php'))
 		include_once ('./classes/'.strtolower($className).'.php');
-	else
-		throw new Exception ('You haven\'t this class '.$className.' in your system. Please add this class in your system.');
+	else{
+		include_once ('./controllers/errors.php');//throw new Exception ('You haven\'t this class '.$className.' in your system. Please add this class in your system.');
+	}
 }
 
 function methodCheck($className, $methodName){
@@ -21,7 +22,7 @@ function methodCheck($className, $methodName){
 			try{
 				$return = $refl->invoke(new $className);		
 			}catch(Exception $e){
-				die($e->getMessage());
+				header("HTTP/1.0 404 Not Found");//die($e->getMessage());
 			}
 		}
 		return $return;
