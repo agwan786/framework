@@ -1,11 +1,26 @@
 <?php
-error_reporting(E_DEPRECATED);
-class Customer extends objectModel{
-	public function __construct(){
+class Customer extends objectModel{	
+	public static $definitation= array(
+		'table'=>'customer',
+		'primary'=>'id',
+		'fields'=>array(
+			'fname'=>array('require'=>true, 'type'=>'string'),
+			'lname'=>array('require'=>true, 'type'=>'string'),
+			'enail'=>array('require'=>true, 'type'=>'string'),
+			'password'=>array('require'=>true, 'type'=>'string'),
+			'date'=>array('require'=>true, 'type'=>'string')
+			)
+		);
+	public function __construct($id_customer=''){			
 		parent::__construct();	
+		if($id_customer){
+			$this->return = 1;
+			$this->where = array('id'=>$id_customer);
+			echo "<pre>";print_r($this->getData());
+		}
 	}
 
-    public function add(){        
+    public function add(){      
         parent::add();
     }
 

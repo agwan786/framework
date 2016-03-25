@@ -1,4 +1,5 @@
 <?php
+include 'configData.php';
 abstract class mySQLModel extends MYSQLException{
 	/* Host value like localhost */
 	protected $host;

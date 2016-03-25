@@ -8,7 +8,7 @@ abstract class MYSQLException extends Exception{
 		$code = mysql_errno(); 
         $message = mysql_error(); 
         // open the log file for appending 
-        if ($fp = fopen($this->log_path."/".$this->log_file,'a')) { 
+        /*if ($fp = fopen($this->log_path."/".$this->log_file,'a')) { 
  
             // construct the log message 
             $log_msg = date("[Y-m-d H:i:s]") . 
@@ -18,7 +18,7 @@ abstract class MYSQLException extends Exception{
             fwrite($fp, $log_msg); 
  
             fclose($fp); 
-        } 
+        }*/
  
         // call parent constructor 
         parent::__construct($message, $code); 

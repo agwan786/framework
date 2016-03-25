@@ -9,7 +9,8 @@ class Index extends Controller{
 	}
 
 	public function helloWorld(){
-		$obj = new Customer();
+		$obj = new Customer('1');
+		//$obj->add();
 		$obj->test();
 	}
 }
