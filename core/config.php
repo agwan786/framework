@@ -2,8 +2,8 @@
 /* Define all configurable data */
 define('_SERVER_', 'localhost');//set server value
 define('_USER_', 'root');//set your database username
-define('_PASSWORD_', 'root');//set your database password
-define('_DATABASE_', 'custom');//set your database name
+define('_PASSWORD_', '');//set your database password
+define('_DATABASE_', 'framework');//set your database name
 define('_TABLE_PREFIX_', 'db_');//set your database prefix
 define('_LOG_','../log');//set your site log folder path
 define('MODE', 'DEV');//set your site developement mode

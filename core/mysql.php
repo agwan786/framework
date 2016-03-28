@@ -1,5 +1,5 @@
 <?php
-include 'config.php';
+include_once 'config.php';
 abstract class Mysql extends Mysqlexception{
 	/* Host value like localhost */
 	protected $host;
@@ -10,7 +10,7 @@ abstract class Mysql extends Mysqlexception{
 	/* Database name value like database */
 	protected $database;
 	
-	private $link;
+	public $link;
 
 	public $error = array();
 
@@ -47,7 +47,7 @@ abstract class Mysql extends Mysqlexception{
 
 	public function execute($query){
 		if(mysqli_query($this->link, $query))
-			return TRUE;
+			return $this->link->insert_id or $this->link->affected_rows;
 		else
 			return FALSE;
 	}

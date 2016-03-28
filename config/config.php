@@ -1,3 +1,3 @@
 <?php
-$config['default_controller'] = 'index';
-$config['default_method'] = 'home';
+$config['default_controller'] = 'welcome';
+$config['default_method'] = 'index';

@@ -5,24 +5,32 @@ abstract class ObjectModel extends Mysql{
 	private $sql;
 	private $class;
 	private $setData = array();
+	private $data = array();
+	public $getData = array();
 	
-	public function __construct(){
+	public function __construct($id=''){
 		parent::__construct();
 		$this->class = strtolower(get_class($this));
 		$obj = new ReflectionClass($this->class);
-		$data = $obj->getStaticPropertyValue('definitation');
-		$this->def($data);
+		$this->data = $obj->getStaticPropertyValue('definitation');
+		if($id!=''){
+			$this->where = array($this->data['primary']=>$id);
+			$this->order_by = array($this->data['primary']=>'desc');
+			$this->return = 1;
+			$this->getData = $this->select();
+		}
 	}	
 
-	public function __set($name,$value){
-		$this->foo[$name] = $value;		
+	public function __set($name, $value){
+		$this->foo[$name] = $value;	
 	}
 
 	public function __get($name){
 		return $this->foo[$name];
 	}
 
-	public function getData(){
+	protected function select(){
+		//$this->def($this->data);
 		$this->sql = 'SELECT ';		
 		$order_by = '';
 		if(isset($this->foo['select'])){
@@ -44,50 +52,65 @@ abstract class ObjectModel extends Mysql{
 
 		if(isset($this->foo['return']))
 			$this->sql .= ' LIMIT 1';
-			
-		return $records = $this->executeS($this->sql);
+		
+		$records = $this->executeS($this->sql);
+		//$this->unsetData();
+		return $records;
 	}
 
-	public function add(){
-		$this->sql = 'INSERT INTO '.$this->class;
-		$columns = '';
-		$values = '';
+	protected function add(){
+		$this->def($this->data);
+		if(empty($this->errors)){
+			$this->sql = 'INSERT INTO '.$this->class;
+			$columns = '';
+			$values = '';
+			foreach ($this->setData as $key => $value) {
+				$columns .= $key.", ";
+				$values .= "'".$value."', ";
+			}
+			$columns = rtrim($columns, " , ");
+			$values = rtrim($values, " , ");
 
-		foreach ($this->setData as $key => $value) {
-			$columns .= $key.", ";
-			$values .= "'".$this->foo[$key]."', ";
+			$this->sql = $this->sql."( ".$columns." ) VALUES (". $values. ")";
+			//echo $this->sql;die;
+			$return = $this->execute($this->sql);
+			$this->unsetData();
+			return $id = $return;
+		}else{
+			$strErr = '';
+			foreach($this->errors as $sqlErr)
+				$strErr .= $sqlErr. "<br/>";
+			$this->unsetData();
+			throw new Exception($strErr);
 		}
-		$columns = rtrim($columns, " , ");
-		$values = rtrim($values, " , ");
-
-		$this->sql = $this->sql."( ".$columns." ) VALUES (". $values. ")";
-		echo $this->sql;die;
-		$this->execute($this->sql);
-		return $id = mysql_insert_id();
 	}
 
-	public function update(){
+	protected function update(){
+		$this->def($this->data);
 		$set = '';
 		$where = '';
 		$where_or = '';
 		$where_in = '';
 		$where_like = '';
-		$this->sql = 'UPDATE {$this->get("table")} SET ';
-		foreach ($this->get('update') as $key => $value) {
+		$this->sql = 'UPDATE {$this->class} SET ';
+		foreach ($this->setData as $key => $value) {
 			$set = "{$key}='{$value}', ";
 		}
 		$set = rtrim($set, ",");
 		$this->sql .= $set ." ";
 		$this->where_condition();
-		$this->execute($this->sql);
-		return mysql_affected_rows();
+		$return = $this->execute($this->sql);
+		$this->unsetData();
+		return $return;
 	}
 
-	public function where_condition(){
+	private function where_condition(){
 		$where = '';
 		$where_or = '';
 		$where_in = '';
 		$where_like = '';
+		// if(isset($this->data['primary']))
+		// 	$where .= $this->data['primary']." = '".$this->getData[$this->data['primary']]."'";
 		if(isset($this->foo['where'])){
 			foreach ($this->foo['where'] as $key => $value)
 				$where .= $key."='".$value."' AND ";
@@ -133,9 +156,30 @@ abstract class ObjectModel extends Mysql{
 		$this->sql = rtrim($this->sql," AND ");
 	}
 
-	public function def($data){
-		foreach($data['fields'] as $key=>$value){
-			$this->setData[$key] = $this->foo[$key];
+	private function def($data = array()){
+		$obj = new Validation();
+		foreach($data['fields'] as $key=>$value){			
+			if(isset($value['require']) && $value['require']){
+				if(!isset($this->foo[$key]) || $this->foo[$key]=="" || $this->foo[$key]==null){
+					if(!isset($this->getData[$key]))
+						$this->errors[] = ucwords($key)." can't be null or blank";
+					else
+						$this->foo[$key] = $this->getData[$key];
+				}
+				if(!$isValid = $obj->validate($value['type'], $this->foo[$key]))
+					$this->errors[] = ucwords($key)." isn't {$value['type']}";
+				if(!$fieldData = $obj->xss_clean($this->foo[$key]))
+					$this->errors[] = ucwords($key)." isn't passed xss clean security";
+			}
+echo "<pre>";print_r($this->link->real_escape_string('data'));die;
+			$this->setData[$key] = isset($this->foo[$key]) ? $this->link->real_escape_string($this->foo[$key]):$this->getData[$key];
 		}
+
+	}
+
+	private function unsetData(){
+		unset($this->foo);
+		unset($this->setData);
+		unset($this->errors);
 	}
 }
