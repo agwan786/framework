@@ -45,6 +45,10 @@ abstract class Mysql extends Mysqlexception{
 	//		throw new Mysqlexception;
 	//}
 
+	public function mysqliFilter($value){
+		return $this->link->real_escape_string($value);
+	}
+
 	public function execute($query){
 		if(mysqli_query($this->link, $query))
 			return $this->link->insert_id or $this->link->affected_rows;

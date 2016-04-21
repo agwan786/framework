@@ -7,6 +7,7 @@ abstract class ObjectModel extends Mysql{
 	private $setData = array();
 	private $data = array();
 	public $getData = array();
+	public $allQuery = array();
 	
 	public function __construct($id=''){
 		parent::__construct();
@@ -52,7 +53,7 @@ abstract class ObjectModel extends Mysql{
 
 		if(isset($this->foo['return']))
 			$this->sql .= ' LIMIT 1';
-		
+		$this->allQuery[] = $this->sql."<br/>";
 		$records = $this->executeS($this->sql);
 		//$this->unsetData();
 		return $records;
@@ -72,7 +73,7 @@ abstract class ObjectModel extends Mysql{
 			$values = rtrim($values, " , ");
 
 			$this->sql = $this->sql."( ".$columns." ) VALUES (". $values. ")";
-			//echo $this->sql;die;
+			$this->allQuery[] = $this->sql."<br/>";
 			$return = $this->execute($this->sql);
 			$this->unsetData();
 			return $id = $return;
@@ -99,6 +100,7 @@ abstract class ObjectModel extends Mysql{
 		$set = rtrim($set, ",");
 		$this->sql .= $set ." ";
 		$this->where_condition();
+		$this->allQuery[] = $this->sql."<br/>";
 		$return = $this->execute($this->sql);
 		$this->unsetData();
 		return $return;
@@ -170,9 +172,12 @@ abstract class ObjectModel extends Mysql{
 					$this->errors[] = ucwords($key)." isn't {$value['type']}";
 				if(!$fieldData = $obj->xss_clean($this->foo[$key]))
 					$this->errors[] = ucwords($key)." isn't passed xss clean security";
+				if(empty($this->errors))
+					$fieldValue = isset($this->foo[$key])?$this->mysqliFilter($this->foo[$key]):$this->getData[$key];
+			}else{
+				$fieldValue = isset($this->foo[$key])?$this->mysqliFilter($this->foo[$key]):"";
 			}
-echo "<pre>";print_r($this->link->real_escape_string('data'));die;
-			$this->setData[$key] = isset($this->foo[$key]) ? $this->link->real_escape_string($this->foo[$key]):$this->getData[$key];
+			$this->setData[$key] = $fieldValue;
 		}
 
 	}
