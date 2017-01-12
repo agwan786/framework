@@ -67,7 +67,7 @@ abstract class ObjectModel extends Mysql{
 			$values = '';
 			foreach ($this->setData as $key => $value) {
 				$columns .= $key.", ";
-				$values .= "'".$value."', ";
+				$values .= "'".mysql_real_escape_string($value)."', ";
 			}
 			$columns = rtrim($columns, " , ");
 			$values = rtrim($values, " , ");
@@ -86,16 +86,17 @@ abstract class ObjectModel extends Mysql{
 		}
 	}
 
-	protected function update(){
+	protected function update(){		
 		$this->def($this->data);
 		$set = '';
 		$where = '';
 		$where_or = '';
 		$where_in = '';
 		$where_like = '';
-		$this->sql = 'UPDATE {$this->class} SET ';
+		$this->sql = 'UPDATE '.$this->class.' SET ';
+
 		foreach ($this->setData as $key => $value) {
-			$set = "{$key}='{$value}', ";
+			$set = "$key='".$value."', ";
 		}
 		$set = rtrim($set, ",");
 		$this->sql .= $set ." ";
@@ -123,21 +124,21 @@ abstract class ObjectModel extends Mysql{
 		
 		if(isset($this->foo['where_or'])){
 			foreach ($this->foo['where_or'] as $key => $value) {
-				$where_or .= "{$key}='{$value}' OR ";
+				$where_or .= "{$key}='".$value."' OR ";
 			}
 			if($where_or!='')
 				$where_or = rtrim($where_or, "OR");
 		}
 		if(isset($this->foo['where_in'])){
 			foreach ($this->foo['where_in'] as $key => $value) {
-				$where_in .= "{$key} IN ({$value}) AND ";
+				$where_in .= "{$key} IN (".$value.") AND ";
 			}
 			if($where_in!='')
 				$where_in = rtrim($where_in, " AND");
 		}
 		if(isset($this->foo['where_like'])){
 			foreach ($this->get('where_like') as $key => $value) {
-				$where_like .= "{$key} LIKE %{$value}% AND ";
+				$where_like .= "{$key} LIKE %".$value."% AND ";
 			}
 			if($where_like!='')
 				$where_like = rtrim($where_like, " AND");
@@ -173,9 +174,9 @@ abstract class ObjectModel extends Mysql{
 				if(!$fieldData = $obj->xss_clean($this->foo[$key]))
 					$this->errors[] = ucwords($key)." isn't passed xss clean security";
 				if(empty($this->errors))
-					$fieldValue = isset($this->foo[$key])?$this->mysqliFilter($this->foo[$key]):$this->getData[$key];
+					$fieldValue = isset($this->foo[$key])?$this->foo[$key]:$this->getData[$key];
 			}else{
-				$fieldValue = isset($this->foo[$key])?$this->mysqliFilter($this->foo[$key]):"";
+				$fieldValue = isset($this->foo[$key])?$this->foo[$key]:"";
 			}
 			$this->setData[$key] = $fieldValue;
 		}
@@ -187,4 +188,5 @@ abstract class ObjectModel extends Mysql{
 		unset($this->setData);
 		unset($this->errors);
 	}
+
 }
